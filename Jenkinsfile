@@ -31,11 +31,18 @@ pipeline {
         // Stage 3: Run SonarQube Analysis
         stage('SonarQube Analysis') {
             steps {
-                // This 'withSonarQubeEnv' block is provided by the SonarQube Scanner plugin
-                withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN_CRED')]) {
-                            sh "mvn sonar:sonar -Dsonar.token=${SONAR_TOKEN_CRED}"
-                }
-            }
+                            // 1. Wrap with the environment context for the Quality Gate
+                            withSonarQubeEnv('SonarQube') {
+                                // 2. Use withCredentials for robust authentication
+                                withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN_CRED')]) {
+                                    // 3. Pass the token directly to Maven
+                                    sh "mvn sonar:sonar -Dsonar.token=${SONAR_TOKEN_CRED}"
+                                }
+                            }
+
+                            // This step now runs AFTER the analysis and can find the correct context
+                            waitForQualityGate abortPipeline: true
+                        }
         }
 
         // Stage 4: Wait for SonarQube Quality Gate result
