@@ -34,6 +34,7 @@ pipeline {
                 // This 'withSonarQubeEnv' block is provided by the SonarQube Scanner plugin
                 withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN_CRED')]) {
                             sh "mvn sonar:sonar -Dsonar.token=${SONAR_TOKEN_CRED}"
+                }
             }
         }
 
