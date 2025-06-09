@@ -32,9 +32,8 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 // This 'withSonarQubeEnv' block is provided by the SonarQube Scanner plugin
-                withSonarQubeEnv('SonarQube') { // 'SonarQube' is the server name we configured in Jenkins System
-                    sh 'mvn sonar:sonar'
-                }
+                withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN_CRED')]) {
+                            sh "mvn sonar:sonar -Dsonar.token=${SONAR_TOKEN_CRED}"
             }
         }
 
