@@ -1,0 +1,18 @@
+# In user-service/src/main/resources/application.yaml
+
+server:
+  port: 8081
+spring:
+  application:
+    name: user-service
+
+eureka:
+  # This is the new, crucial part
+  instance:
+    # Tell Eureka to prefer the IP address for registration
+    prefer-ip-address: true
+    # (Optional but good practice) Define a pattern for how the instance ID appears in Eureka
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
